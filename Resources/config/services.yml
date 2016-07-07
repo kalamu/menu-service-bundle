@@ -1,0 +1,9 @@
+parameters:
+    kalamu_menu_service.menu_builder.class: Kalamu\MenuServiceBundle\Menu\MenuBuilder
+
+services:
+
+    kalamu_menu_service.menu_builder:
+        class: %kalamu_menu_service.menu_builder.class%
+        arguments: ['%kalamu_menu_service.menus%', '@knp_menu.factory', '@event_dispatcher']
+
