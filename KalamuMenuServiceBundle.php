@@ -4,6 +4,7 @@ namespace Kalamu\MenuServiceBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Kalamu\MenuServiceBundle\DependencyInjection\Compiler\CustomPass;
 
 class KalamuMenuServiceBundle extends Bundle
 {
