@@ -20,6 +20,6 @@
         "knplabs/knp-menu-bundle": "^2.0"
     },
     "autoload": {
-         "psr-4": { "Kalamu\\MenuServiceBundle": "" }
+         "psr-4": { "Kalamu\\MenuServiceBundle\\": "" }
     }
 }
