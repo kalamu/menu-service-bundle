@@ -4,13 +4,13 @@ This bundle provide a menu service for knp/menu-bundle that is configurable by c
 
 ## Installation
 
-```
+``` sh
 composer require kalamu/menu-service-bundle:^1.0
 ```
 
 Puis ajouter dans `AppKernel.php`
 
-```
+``` php
     public function registerBundles()
     {
         $bundles = array(
@@ -25,7 +25,7 @@ Puis ajouter dans `AppKernel.php`
 
 To build a menu, you just have to add the items in your `app/config/config.yml` file :
 
-```
+``` yaml
 kalamu_menu_service:
     menu_name:
         items:
@@ -36,7 +36,7 @@ kalamu_menu_service:
 
 Then, to add the menu in the template :
 
-```
+``` twig
 <div class="my_menu">
     {{knp_menu_render('menu_name', {'allow_safe_labels': true})}}
 </div>
