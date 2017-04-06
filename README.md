@@ -1,4 +1,4 @@
-# MenuServiceBundle
+# MenuServiceBundle
 
 This bundle provide a menu service for knp/menu-bundle that is configurable by config file.
 
