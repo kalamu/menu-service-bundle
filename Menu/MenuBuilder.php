@@ -109,6 +109,22 @@ class MenuBuilder
             }
         }
 
+        if($config['hide_if_no_child']){
+            if(!isset($config['items']) || !count($config['items'])){
+                return false;
+            }
+            $hasChild = false;
+            foreach($config['items'] as $child){
+                if($this->allowAccess($child)){
+                    $hasChild = true;
+                    break;
+                }
+            }
+            if(!$hasChild){
+                return false;
+            }
+        }
+
         return true;
     }
 

@@ -80,9 +80,36 @@ kalamu_menu_service:
 To access the *Home* item, the user must have either the role `ROLE_USER` or
 the role `ROLE_OPEN_DOOR`.
 
-
 The option `roles` can be used in combination with the `allow_if` options.
 In such case, both constraints must be satisfied  to grant access.
+
+### Restrict access by hierarchy
+
+On a menu with hierarchical items, most of the time the parent item has no sens
+without his children. So it must be removed if all children are not accessible
+to the current user.
+
+If there is only a few underlying roles, this could be handled with the `allow_if`
+option. But if the number of constraints grow, the task become uselessly
+cumbersome.
+
+The `hide_if_no_child` option solve this problem. If set to true, the item is
+available only if the user has access to at least one child.
+
+Example:
+
+``` yaml
+kalamu_menu_service:
+    menu_name:
+        items:
+            -
+                label: "User management"
+                route: ''
+                hide_if_no_child: true
+                items:
+                    - {label: "Users", route: user_list, roles: ['ROLE_MANAGE_USER'] }
+                    - {label: "Groups", route: group_list, allow_if: '(user and user.isSuperAdmin())) or user.isGoodManager()' }
+```
 
 
 ## Customisation
