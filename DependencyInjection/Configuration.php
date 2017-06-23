@@ -46,7 +46,8 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('label')->isRequired()->end()
                     ->scalarNode('route')->end()
                     ->scalarNode('class')->end()
-                    ->arrayNode('roles')->prototype('scalar')->end()->end();
+                    ->arrayNode('roles')->prototype('scalar')->end()->end()
+                    ->scalarNode('allow_if')->end();
 
         if($nb_nested>0){ // FIXME : if we go deeper, the memory consumption is too high
             $suite = $suite

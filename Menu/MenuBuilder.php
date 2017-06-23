@@ -2,9 +2,10 @@
 
 namespace Kalamu\MenuServiceBundle\Menu;
 
-use Knp\Menu\FactoryInterface;
 use Kalamu\MenuServiceBundle\Event\ConfigureMenuEvent;
+use Knp\Menu\FactoryInterface;
 use Knp\Menu\MenuItem;
+use Symfony\Component\ExpressionLanguage\Expression;
 
 /**
  * This service generate the knp menus
@@ -22,7 +23,7 @@ class MenuBuilder
         $this->factory = $factory;
         $this->event_dispatcher = $event_dispatcher;
     }
-    
+
     public function setSecurity($security){
         $this->security = $security;
     }
@@ -50,10 +51,8 @@ class MenuBuilder
 
 
     protected function addItem(MenuItem $root, $config){
-        foreach($config['roles'] as $role){
-            if(!$this->security->isGranted($role)){
-                return null;
-            }
+        if(!$this->allowAccess($config)){
+            return null;
         }
 
         $name = $config['label'];
@@ -90,6 +89,27 @@ class MenuBuilder
 
         }
 
+    }
+
+    /**
+     * Check if user is allowed to see this item
+     * @param array $config
+     * @return boolean
+     */
+    protected function allowAccess($config){
+        foreach($config['roles'] as $role){
+            if(!$this->security->isGranted($role)){
+                return false;
+            }
+        }
+
+        if(isset($config['allow_if'])){
+            if(!$this->security->isGranted(new Expression($config['allow_if']))){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
