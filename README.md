@@ -5,7 +5,7 @@ This bundle provide a menu service for knp/menu-bundle that is configurable by c
 ## Installation
 
 ``` sh
-composer require kalamu/menu-service-bundle:^1.0
+composer require kalamu/menu-service-bundle:^2.0
 ```
 
 Puis ajouter dans `AppKernel.php`

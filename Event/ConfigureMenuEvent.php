@@ -8,7 +8,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ConfigureMenuEvent extends Event
 {
-
     private $factory;
     private $menu;
 

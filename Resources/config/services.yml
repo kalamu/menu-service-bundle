@@ -1,9 +1,11 @@
-parameters:
-    kalamu_menu_service.menu_builder.class: Kalamu\MenuServiceBundle\Menu\MenuBuilder
 
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
 
-    kalamu_menu_service.menu_builder:
-        class: '%kalamu_menu_service.menu_builder.class%'
-        arguments: ['%kalamu_menu_service.menus%', '@knp_menu.factory', '@event_dispatcher']
-
+    Kalamu\MenuServiceBundle\Menu\MenuBuilder:
+        class: Kalamu\MenuServiceBundle\Menu\MenuBuilder
+        arguments:
+            $config: '%kalamu_menu_service.menus%'

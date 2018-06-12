@@ -5,42 +5,46 @@ namespace Kalamu\MenuServiceBundle\Menu;
 use Kalamu\MenuServiceBundle\Event\ConfigureMenuEvent;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\MenuItem;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * This service generate the knp menus
  */
 class MenuBuilder
 {
-
     protected $config;
     protected $factory;
-    protected $security;
+    protected $authorizationChecker;
     protected $event_dispatcher;
 
-    public function __construct($config, FactoryInterface $factory, $event_dispatcher){
+    public function __construct(
+        array $config,
+            FactoryInterface $factory,
+            EventDispatcherInterface $event_dispatcher,
+            AuthorizationCheckerInterface $authorizationChecker
+    ) {
         $this->config = $config;
         $this->factory = $factory;
         $this->event_dispatcher = $event_dispatcher;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function setSecurity($security){
-        $this->security = $security;
-    }
 
-    public function createMenu($name){
-
-        if(!array_key_exists($name, $this->config)){
+    public function createMenu($name)
+    {
+        if (!array_key_exists($name, $this->config)) {
             throw new \InvalidArgumentException(sprintf("There is no menu named '%s'", $name));
         }
 
         $menu = $this->factory->createItem('root');
 
-        if(isset($this->config[$name]['class'])){
+        if (isset($this->config[$name]['class'])) {
             $menu->setChildrenAttribute('class', $this->config[$name]['class']);
         }
 
-        foreach($this->config[$name]['items'] as $item){
+        foreach ($this->config[$name]['items'] as $item) {
             $this->addItem($menu, $item);
         }
 
@@ -50,8 +54,9 @@ class MenuBuilder
     }
 
 
-    protected function addItem(MenuItem $root, $config){
-        if(!$this->allowAccess($config)){
+    protected function addItem(MenuItem $root, $config)
+    {
+        if (!$this->allowAccess($config)) {
             return null;
         }
 
@@ -61,34 +66,32 @@ class MenuBuilder
         $label .= (isset($config['items']) && count($config['items'])) ? '<span class="caret"></span>' : '';
 
         $options = array('label' => $label, 'extras' => array('safe_label' => true));
-        if('#' == $config['route']){
+        if ('#' == $config['route']) {
             $options['uri'] = '#';
-        }elseif($config['route']){
+        } elseif ($config['route']) {
             $options['route'] = $config['route'];
         }
 
 
-        if($root->getChild($name)){
+        if ($root->getChild($name)) {
             $name .= microtime();
         }
         $MenuItem = $root->addChild($name, $options);
-        if(isset($config['class'])){
+        if (isset($config['class'])) {
             $MenuItem->setAttribute('class', $config['class']);
         }
 
 
-        if(isset($config['items'])){
-            foreach($config['items'] as $item){
+        if (isset($config['items'])) {
+            foreach ($config['items'] as $item) {
                 $this->addItem($MenuItem, $item);
             }
 
-            if($root->getLevel()){
+            if ($root->getLevel()) {
                 $root->setChildrenAttribute('class', 'nav sub-nav');
                 $root->setLinkAttribute('class', 'accordion-toggle');
             }
-
         }
-
     }
 
     /**
@@ -96,36 +99,36 @@ class MenuBuilder
      * @param array $config
      * @return boolean
      */
-    protected function allowAccess($config){
-        foreach($config['roles'] as $role){
-            if(!$this->security->isGranted($role)){
+    protected function allowAccess($config)
+    {
+        foreach ($config['roles'] as $role) {
+            if (!$this->authorizationChecker->isGranted($role)) {
                 return false;
             }
         }
 
-        if(isset($config['allow_if'])){
-            if(!$this->security->isGranted(new Expression($config['allow_if']))){
+        if (isset($config['allow_if'])) {
+            if (!$this->authorizationChecker->isGranted(new Expression($config['allow_if']))) {
                 return false;
             }
         }
 
-        if($config['hide_if_no_child']){
-            if(!isset($config['items']) || !count($config['items'])){
+        if ($config['hide_if_no_child']) {
+            if (!isset($config['items']) || !count($config['items'])) {
                 return false;
             }
             $hasChild = false;
-            foreach($config['items'] as $child){
-                if($this->allowAccess($child)){
+            foreach ($config['items'] as $child) {
+                if ($this->allowAccess($child)) {
                     $hasChild = true;
                     break;
                 }
             }
-            if(!$hasChild){
+            if (!$hasChild) {
                 return false;
             }
         }
 
         return true;
     }
-
 }

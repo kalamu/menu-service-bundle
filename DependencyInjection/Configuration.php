@@ -34,8 +34,8 @@ class Configuration implements ConfigurationInterface
     }
 
 
-    protected function addItems($nb_nested = 0){
-
+    protected function addItems($nb_nested = 0)
+    {
         $builder = new TreeBuilder();
         $node = $builder->root('items');
 
@@ -50,11 +50,11 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('allow_if')->end()
                     ->booleanNode('hide_if_no_child')->defaultFalse()->end();
 
-        if($nb_nested>0){ // FIXME : if we go deeper, the memory consumption is too high
+        if ($nb_nested>0) { // FIXME : if we go deeper, the memory consumption is too high
             $suite = $suite
                     ->scalarNode('icon')->defaultValue('<i class="fa fa-folder"></i>')->end()
                     ->append($this->addItems($nb_nested-1));
-        }else{
+        } else {
             $suite = $suite
                     ->scalarNode('icon')->defaultValue('<i class="fa fa-angle-double-right"></i>')->end();
         }
@@ -64,8 +64,5 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $node;
-
-
     }
-
 }
